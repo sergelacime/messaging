@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+</head>
+<body class="bg-dark">
+	<div class="container justify-content-center rounded">
+		<div class="card mt-5 mb-5 border-0 rounded"> 
+			<div class="card-header rounded">
+				<h2>Boîte de messagerie</h2>
+				<a class="btn btn-danger btn-sm" href="{% url 'logout' %}">Se déconnecter</a>
+			</div>
+			<div class="card-body" id="chat-messages" style="background: linear-gradient(#e66465, #9198e5);">
+
+				
+				{% if messages %}
+				{% for message in messages %}
+				<div class="row" >
+					{% if message.sender.username == request.user.username %}
+					<div class="col-md-6 mt-2 mb-2">
+						<div class="card rounded  container ">
+							<div class="card-header bg-transparent">
+								<strong>Vous <code>- à {{message.recipient}} </code></strong> 
+
+							</div>
+							
+							<div class="card-body">
+								{{ message.body }}
+							</div>
+							<div class="card-footer">
+								<a href="{% url 'edit_message' message.id %}">Modifier</a>
+					        	<a href="{% url 'delete_message' message.id %}">Supprimer</a>
+							</div>
+					        
+					        
+						</div>
+					</div>
+
+					<div class="col-md-6 mt-2 mb-2">
+						<div class="card rounded border-0 bg-transparent">
+					
+						</div>
+					</div>
+					{% else %}
+				    <div class="col-md-6 mt-2 mb-2">
+						<div class="card rounded border-0 bg-transparent ">
+					        
+					        
+						</div>
+					</div>
+
+					<div class="col-md-6 mt-2 mb-2">
+						<div class="card rounded container">
+							<strong>{{ message.sender.username }} <code>- à {{message.recipient}} </code></strong> {{ message.body }}
+
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				{% endfor %}
+				{% endif %}
+
+
+
+
+				<form method="post" action="{% url 'compose' %} ">
+				  {% csrf_token %}
+				  <div class="  col-md-4 mt-5 container ">
+				  	<select name="recipient" class="form-select border-dark" required>
+				  		{% for u in user %}
+					  		{% if u != request.user %}
+					  		    <option value="{{u.username}}">{{u.username}}</option>
+					  		
+					  		{% endif %}
+				  		{% endfor %}
+				  	</select>
+				    
+				    <!-- <input class="form-control border-dark  " type="text" name="recipient" placeholder="Destinateur" required> -->
+				  </div>
+				  
+				  <div class="container group btn-group mt-2">
+				    <input class="form-control border-dark" name="body"  placeholder="message" required>
+				     <button class="btn btn-success" type="submit">Envoyer</button>
+				  </div>
+				 
+				</form>
+
+
+				<!-- <a href="{% url 'compose' %}">Nouveau message</a> -->
+				
+			</div>
+		</div>
+		
+		
+
+	</div>
+
+
+</body>
+</html>
