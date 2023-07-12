@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .models import User, Message
 from .forms import ComposeForm
-from django.http import JsonResponse
+from django.http import HttpResponse
+from django.core.serializers import serialize
 
 
 def login_view(request):
@@ -35,12 +36,10 @@ def inbox_view(request):
 def chat_view(request):
     if request.user.is_authenticated:
         messages = Message.objects.all()
-        # messages = Message.objects.filter(recipient=request.user)
-
-        return JsonResponse({'messages': messages})
+        serialized_messages = serialize('json', messages)
+        return HttpResponse(serialized_messages, content_type='application/json')
     else:
         return redirect('login')
-
 
 
 
